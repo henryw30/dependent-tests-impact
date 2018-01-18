@@ -46,7 +46,12 @@ public class OneConfigurationRunner extends Runner {
 
     public static void main(String[] args) {
         parseArgs(args);
-
+        
+      //initialize paraObj with number of threads to use
+        //ParaThreads paraObj = new ParaThreads(threads);
+        //initialize dtfObj in case threads not specified
+        DependentTestFinder dtfObj = new DependentTestFinder();
+        
         Map<String, RESULT> nameToOrigResults = getCurrentOrderTestListResults(origOrderTestList, filesToDelete);
 
         // capture start time
@@ -105,10 +110,20 @@ public class OneConfigurationRunner extends Runner {
                     counter += 1;
 
                     fixedDT.add(testName);
-                    // DependentTestFinder
-                    DependentTestFinder.runDTF(testName, nameToOrigResults.get(testName), currentOrderTestList,
-                            origOrderTestList, filesToDelete, allDTList);
-                    allDTList = DependentTestFinder.getAllDTs();
+                    
+                  //threads is default set to 0, but if specified, use ParaThreads class
+                    if(threads >= 1)
+                    {
+                    	//paraObj.setParaVars(changedTests, nameToOrigResults, currentOrderTestList, origOrderTestList, filesToDelete, allDTList);
+                        //allDTList = paraObj.runThreads();
+                    }
+                    //if not specified, use default DependentTestFinder 
+                    else
+                    {
+                    	DependentTestFinder.runDTF(testName, nameToOrigResults.get(testName), currentOrderTestList, origOrderTestList, filesToDelete, allDTList);
+                        allDTList=DependentTestFinder.getAllDTs();
+                    }                    
+                    
                     // TestListGenerator
                     testObj.resetDTList(allDTList);
                     currentOrderTestList = getCurrentTestList(testObj, i);
